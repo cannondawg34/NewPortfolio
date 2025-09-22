@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "postbuild": "powershell -Command \"Copy-Item -Path dist/index.html -Destination dist/404.html -Force\"",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",

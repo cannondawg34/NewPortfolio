@@ -1,44 +1,52 @@
 // src/pages/Projects.jsx
 import { useMemo, useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import '../GameSite/css/styles.css';
 
 /* ---------------------------------------------------------------------------
-   1) PROJECT DATA — the single source of truth the UI renders from
-      Each project includes two extra fields to support filtering:
-      - `stack`: array of technologies used (e.g., ['React', 'SQL'])
-      - `type` : one category string (e.g., 'web', 'game', 'data')
-   --------------------------------------------------------------------------- */
+   Helper: build a correct URL for GitHub Pages.
+   - BASE_URL = "/" in dev, "/NewPortfolio/" in production
+   - We also encode the path in case a space sneaks in
+--------------------------------------------------------------------------- */
+const BASE = import.meta.env.BASE_URL;
+const dlUrl = (path) => encodeURI(`${BASE}${path.replace(/^\//, '')}`);
+
+/* ---------------------------------------------------------------------------
+   1) PROJECT DATA — single source of truth
+--------------------------------------------------------------------------- */
 const PROJECTS = [
   {
     title: 'Cinema E-Booking Website',
     slug: 'cinema-ebooking',
     thumb: '/images/cinema-ebooking.jpg',
     description:
-      'Spring Boot + MySQL ticketing app with seat selection, showtimes, and admin management.',
-    download: '/downloads/Cinema_E_Booking_System-main (2).zip',
+      'Full Stack Web Application built with React, Spring-Boot, and MySQL. Allows users to create an account and log in, book a showtime for a movie, and even use promo codes to get deals!',
+    // put file at: public/downloads/cinema-e-booking.zip  (rename if needed)
+    download: 'downloads/cinema-e-booking.zip',
     details: '/projects/cinema-ebooking',
     stack: ['Java', 'Spring Boot', 'SQL', 'HTML', 'CSS', 'React'],
     type: 'web',
   },
   {
-    title: 'Video Game Query Website',
+    title: 'Video Game Recommender Website',
     slug: 'vg-query',
     thumb: '/images/video-game-query.jpg',
     description:
-      'Flask web app to browse and filter video games with search, sorting, and charts.',
-    download: '/downloads/Flask App (2).zip',
+      'Flask web app to browse and filter recommended video games based on user searches!',
+    // public/downloads/flask-app.zip
+    download: 'downloads/flask-app.zip',
     details: '/projects/vg-query',
     stack: ['Python', 'Flask', 'SQL'],
-    type: 'web', 
+    type: 'web',
   },
   {
     title: 'NBA Predicting Stats',
     slug: 'nba-stats-predictor',
     thumb: '/images/nba-predictor.jpg',
     description:
-      'Python/ML project that ingests JSON -> CSV and predicts per-game player stats.',
-    download: '/downloads/NBA_Player_Props-main.zip',
+      'Machine learning pipeline that extracts NBA game data from JSON APIs, transforms it into CSV datasets, and trains models to predict player performance stats.',
+    // public/downloads/nba-player-props.zip
+    download: 'downloads/nba-player-props.zip',
     details: '/projects/nba-stats-predictor',
     stack: ['Python', 'Pandas', 'Sklearn'],
     type: 'data',
@@ -48,20 +56,21 @@ const PROJECTS = [
     slug: 'school-portfolio',
     thumb: '/images/school-portfolio.jpg',
     description:
-      'Responsive personal site showcasing coursework and projects, built with React + Vite.',
-    download: '/downloads/cannondyer-main.zip',
+      'This is my old Portfolio Site that I made in school! Built with HTML and CSS',
+    // public/downloads/old-portfolio.zip
+    download: 'downloads/old-portfolio.zip',
     details: '/projects/school-portfolio',
-    stack: ['React', 'Vite', 'HTML', 'CSS'],
+    stack: ['HTML', 'CSS'],
     type: 'web',
   },
-  // NEW: Image Post Gallery (MERN)
   {
     title: 'Image Post Gallery (MERN)',
     slug: 'image-post-gallery',
     thumb: '/images/image-post-gallery.jpg',
     description:
       'React + Node/Express image gallery backed by MongoDB. Users upload images with titles/descriptions; posts render on the homepage with basic auth.',
-    download: '/downloads/4300-Final-Project-main.zip',
+    // public/downloads/image-post-gallery.zip
+    download: 'downloads/image-post-gallery.zip',
     details: '/projects/image-post-gallery',
     stack: ['React', 'Node', 'Express', 'MongoDB', 'Axios', 'HTML', 'CSS'],
     type: 'web',
@@ -71,8 +80,9 @@ const PROJECTS = [
     slug: 'db-proj3',
     thumb: '/images/db-proj3.jpg',
     description:
-      'Java database systems project: implements a linear-hashing map for indexing, a Table abstraction, and a Tuple Generator for data.',
-    download: '/downloads/DBProj3.zip',
+      'Java database systems project: Implements a linear-hashing map for indexing, a Table abstraction, and a Tuple Generator for data.',
+    // public/downloads/db-proj3.zip
+    download: 'downloads/db-proj3.zip',
     details: '/projects/db-proj3',
     stack: ['Java', 'Indexing', 'Linear Hashing'],
     type: 'data',
@@ -83,7 +93,8 @@ const PROJECTS = [
     thumb: '/images/java-tcp-sockets.jpg',
     description:
       'Java networking mini-project: TCP server on port 6789 and client using sockets, BufferedReader/DataOutputStream, and a tiny text protocol.',
-    download: '/downloads/Networks_1.zip',
+    // public/downloads/networks_1.zip
+    download: 'downloads/networks_1.zip',
     details: '/projects/java-tcp-sockets',
     stack: ['Java', 'TCP'],
     type: 'systems',
@@ -91,20 +102,17 @@ const PROJECTS = [
 ];
 
 /* ---------------------------------------------------------------------------
-   2) UTIL: derive unique filter options from the data
-      - This keeps the UI and data in sync automatically.
-      - `unique` returns a sorted array of unique strings.
-   --------------------------------------------------------------------------- */
+   2) UTIL: derive unique filter options
+--------------------------------------------------------------------------- */
 function unique(list) {
   return Array.from(new Set(list)).sort((a, b) => a.localeCompare(b));
 }
-
 const ALL_STACKS = unique(PROJECTS.flatMap((p) => p.stack || []));
 const ALL_TYPES  = unique(PROJECTS.map((p) => p.type).filter(Boolean));
 
 /* ---------------------------------------------------------------------------
    3) PRESENTATIONAL CHIP COMPONENT
-   --------------------------------------------------------------------------- */
+--------------------------------------------------------------------------- */
 function Chip({ active, children, onClick }) {
   return (
     <button
@@ -244,9 +252,10 @@ export default function Projects() {
                 ))}
               </div>
 
-              <div className="project-actions">
-                <Link to={p.details} className="btn">Learn More</Link>
-                <a href={p.download} className="btn" download>Download</a>
+              <div className="project-actions single">
+                <a href={dlUrl(p.download)} className="btn" download>
+                  Download
+                </a>
               </div>
             </div>
           ))}
@@ -270,6 +279,7 @@ export default function Projects() {
         /* Small cosmetic tweaks since there's no thumbnail */
         .project-card h3 { margin-top: .25rem; margin-bottom: .35rem; }
         .project-card p { margin: 0 0 .5rem 0; line-height: 1.45; }
+        .project-actions.single { display: flex; justify-content: flex-start; }
       `}</style>
     </main>
   );

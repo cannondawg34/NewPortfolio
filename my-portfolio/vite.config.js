@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
-export default defineConfig({
+// Use base only in production so dev stays at http://localhost:5173/
+export default defineConfig(({ mode }) => ({
   plugins: [react()],
-  base: "/NewPortfolio/", // repo name
-})
+  base: mode === 'production' ? '/NewPortfolio/' : '/',
+}))
