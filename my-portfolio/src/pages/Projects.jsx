@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+// src/pages/Projects.jsx
+import { useMemo, useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import '../GameSite/css/styles.css';
 
 /* ---------------------------------------------------------------------------
@@ -9,50 +10,84 @@ import '../GameSite/css/styles.css';
       - `type` : one category string (e.g., 'web', 'game', 'data')
    --------------------------------------------------------------------------- */
 const PROJECTS = [
-{
-  title: 'Cinema E-Booking Website',
-  slug: 'cinema-ebooking',
-  thumb: '/images/cinema-ebooking.jpg',
-  description:
-    'Spring Boot + MySQL ticketing app with seat selection, showtimes, and admin management.',
-  download: '/downloads/Cinema_E_Booking_System-main (2).zip',
-  details: '/projects/cinema-ebooking',
-  stack: ['Java', 'Spring Boot', 'MySQL'],
-  type: 'web',
-},
-{
-  title: 'Video Game Query Website',
-  slug: 'vg-query',
-  thumb: '/images/video-game-query.jpg',
-  description:
-    'Flask web app to browse and filter video games with search, sorting, and charts.',
-  download: '/downloads/Flask App (2).zip',
-  details: '/projects/vg-query',
-  stack: ['Python', 'Flask', 'SQL'],
-  type: 'web',
-},
-{
-  title: 'NBA Predicting Stats',
-  slug: 'nba-stats-predictor',
-  thumb: '/images/nba-predictor.jpg',
-  description:
-    'Python/ML project that ingests JSON -> CSV and predicts per-game player stats.',
-  download: '/downloads/NBA_Player_Props-main.zip',
-  details: '/projects/nba-stats-predictor',
-  stack: ['Python', 'Pandas', 'Sklearn'],
-  type: 'data',
-},
-{
-  title: 'School Portfolio Website',
-  slug: 'school-portfolio',
-  thumb: '/images/school-portfolio.jpg',
-  description:
-    'Responsive personal site showcasing coursework and projects, built with React + Vite.',
-  download: '/downloads/cannondyer-main.zip',
-  details: '/projects/school-portfolio',
-  stack: ['React', 'Vite', 'CSS'],
-  type: 'web',
-},
+  {
+    title: 'Cinema E-Booking Website',
+    slug: 'cinema-ebooking',
+    thumb: '/images/cinema-ebooking.jpg',
+    description:
+      'Spring Boot + MySQL ticketing app with seat selection, showtimes, and admin management.',
+    download: '/downloads/Cinema_E_Booking_System-main (2).zip',
+    details: '/projects/cinema-ebooking',
+    stack: ['Java', 'Spring Boot', 'SQL', 'HTML', 'CSS', 'React'],
+    type: 'web',
+  },
+  {
+    title: 'Video Game Query Website',
+    slug: 'vg-query',
+    thumb: '/images/video-game-query.jpg',
+    description:
+      'Flask web app to browse and filter video games with search, sorting, and charts.',
+    download: '/downloads/Flask App (2).zip',
+    details: '/projects/vg-query',
+    stack: ['Python', 'Flask', 'SQL'],
+    type: 'web', 
+  },
+  {
+    title: 'NBA Predicting Stats',
+    slug: 'nba-stats-predictor',
+    thumb: '/images/nba-predictor.jpg',
+    description:
+      'Python/ML project that ingests JSON -> CSV and predicts per-game player stats.',
+    download: '/downloads/NBA_Player_Props-main.zip',
+    details: '/projects/nba-stats-predictor',
+    stack: ['Python', 'Pandas', 'Sklearn'],
+    type: 'data',
+  },
+  {
+    title: 'Old Portfolio Website',
+    slug: 'school-portfolio',
+    thumb: '/images/school-portfolio.jpg',
+    description:
+      'Responsive personal site showcasing coursework and projects, built with React + Vite.',
+    download: '/downloads/cannondyer-main.zip',
+    details: '/projects/school-portfolio',
+    stack: ['React', 'Vite', 'HTML', 'CSS'],
+    type: 'web',
+  },
+  // NEW: Image Post Gallery (MERN)
+  {
+    title: 'Image Post Gallery (MERN)',
+    slug: 'image-post-gallery',
+    thumb: '/images/image-post-gallery.jpg',
+    description:
+      'React + Node/Express image gallery backed by MongoDB. Users upload images with titles/descriptions; posts render on the homepage with basic auth.',
+    download: '/downloads/4300-Final-Project-main.zip',
+    details: '/projects/image-post-gallery',
+    stack: ['React', 'Node', 'Express', 'MongoDB', 'Axios', 'HTML', 'CSS'],
+    type: 'web',
+  },
+  {
+    title: 'DB Project: Linear Hashing Index',
+    slug: 'db-proj3',
+    thumb: '/images/db-proj3.jpg',
+    description:
+      'Java database systems project: implements a linear-hashing map for indexing, a Table abstraction, and a Tuple Generator for data.',
+    download: '/downloads/DBProj3.zip',
+    details: '/projects/db-proj3',
+    stack: ['Java', 'Indexing', 'Linear Hashing'],
+    type: 'data',
+  },
+  {
+    title: 'TCP Client/Server (Java Sockets)',
+    slug: 'java-tcp-sockets',
+    thumb: '/images/java-tcp-sockets.jpg',
+    description:
+      'Java networking mini-project: TCP server on port 6789 and client using sockets, BufferedReader/DataOutputStream, and a tiny text protocol.',
+    download: '/downloads/Networks_1.zip',
+    details: '/projects/java-tcp-sockets',
+    stack: ['Java', 'TCP'],
+    type: 'systems',
+  },
 ];
 
 /* ---------------------------------------------------------------------------
@@ -61,20 +96,14 @@ const PROJECTS = [
       - `unique` returns a sorted array of unique strings.
    --------------------------------------------------------------------------- */
 function unique(list) {
-  // Create a Set to remove duplicates, then convert back to array and sort.
   return Array.from(new Set(list)).sort((a, b) => a.localeCompare(b));
 }
 
-// All distinct technologies across all projects (e.g., React, Python, SQL)
 const ALL_STACKS = unique(PROJECTS.flatMap((p) => p.stack || []));
-// All distinct types (e.g., 'web', 'data', 'game')
-const ALL_TYPES = unique(PROJECTS.map((p) => p.type).filter(Boolean));
+const ALL_TYPES  = unique(PROJECTS.map((p) => p.type).filter(Boolean));
 
 /* ---------------------------------------------------------------------------
    3) PRESENTATIONAL CHIP COMPONENT
-      - A small button that can be toggled on/off.
-      - `aria-pressed` helps screen readers announce its state.
-      - No state lives here; it receives `active` + `onClick` from the parent.
    --------------------------------------------------------------------------- */
 function Chip({ active, children, onClick }) {
   return (
@@ -91,56 +120,51 @@ function Chip({ active, children, onClick }) {
 
 // --- Page -------------------------------------------------------------------
 export default function Projects() {
-  // `query` holds the search string from the input box
+  const location = useLocation();
+
+  // Smoothly scroll to the top of the Projects list when URL hash is #projectsTop
+  useEffect(() => {
+    if (location.hash === '#projectsTop') {
+      const el = document.getElementById('projectsTop');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [location]);
+
   const [query, setQuery] = useState('');
-  // `stacks` is a Set of selected technology chips (e.g., React, SQL)
   const [stacks, setStacks] = useState(() => new Set());
-  // `types` is a Set of selected category chips (e.g., web, data, game)
   const [types, setTypes] = useState(() => new Set());
 
-  // Helper to immutably toggle a value inside a Set (so React sees a new object)
   const toggle = (set, value) => {
     const next = new Set(set);
     if (next.has(value)) next.delete(value); else next.add(value);
     return next;
   };
 
-  // Compute the list of projects that should be visible based on current filters.
-  // useMemo caches the result until one of the dependencies changes.
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
 
     return PROJECTS.filter(p => {
-      // Build a single searchable string of relevant fields for text matching.
       const matchesQuery = !q || [
         p.title,
         p.description,
         ...(p.stack || []),
         p.type,
       ]
-        .filter(Boolean)       // ignore null/undefined
-        .join(' ')             // combine everything into one string
+        .filter(Boolean)
+        .join(' ')
         .toLowerCase()
-        .includes(q);          // simple substring search (case-insensitive)
+        .includes(q);
 
-      // Stacks filter logic:
-      // - If no stack chips selected, match everything.
-      // - Otherwise, project must have at least one of the selected stacks.
       const matchesStacks =
         stacks.size === 0 || (p.stack || []).some(s => stacks.has(s));
 
-      // Types filter logic:
-      // - If no type chips selected, match everything.
-      // - Otherwise, project's type must be one of the selected types.
       const matchesTypes =
         types.size === 0 || (p.type && types.has(p.type));
 
-      // Project is included only if it matches all three checks.
       return matchesQuery && matchesStacks && matchesTypes;
     });
   }, [query, stacks, types]);
 
-  // Reset the search and both filter sets in one click.
   const clearAll = () => {
     setQuery('');
     setStacks(new Set());
@@ -149,14 +173,13 @@ export default function Projects() {
 
   return (
     <main>
-      <section className="projects-section">
-        <h2>Explore My Projects</h2>
+      {/* Anchor target: this is where the button lands on /projects#projectsTop */}
+      <section id="projectsTop" className="projects-section">
+        <h2>All Projects</h2>
 
-        {/* Filters Bar: search, Clear, Type chips, Stack chips, and live count */}
+        {/* Filters Bar */}
         <div className="filters-bar" role="region" aria-label="Project filters">
-          {/* Search row */}
           <div className="filters-row">
-            {/* Keep the input accessible for screen readers without showing text visually */}
             <label htmlFor="project-search" className="visually-hidden">Search projects</label>
             <input
               id="project-search"
@@ -166,13 +189,11 @@ export default function Projects() {
               onChange={e => setQuery(e.target.value)}
               className="input"
             />
-            {/* Clears query + all selected chips */}
             <button type="button" className="btn btn--ghost" onClick={clearAll}>
               Clear
             </button>
           </div>
 
-          {/* Type chips (web, data, game, etc.). Selecting multiple uses OR logic. */}
           <div className="filters-row">
             <span className="filters-label">Type:</span>
             <div className="chips">
@@ -188,7 +209,6 @@ export default function Projects() {
             </div>
           </div>
 
-          {/* Stack chips (React, Java, SQL, etc.). Selecting multiple uses OR logic. */}
           <div className="filters-row">
             <span className="filters-label">Stack:</span>
             <div className="chips">
@@ -204,27 +224,19 @@ export default function Projects() {
             </div>
           </div>
 
-          {/* Live status—updates as filters change. aria-live announces changes to AT. */}
           <div className="filters-meta" aria-live="polite">
             Showing {filtered.length} of {PROJECTS.length}
           </div>
         </div>
 
-        {/* Grid of cards: uses the filtered list (not the raw PROJECTS array) */}
+        {/* Grid */}
         <div className="project-grid">
           {filtered.map((p) => (
             <div className="project-card" key={p.slug}>
-              <img
-                src={p.thumb}
-                alt={`${p.title} thumbnail`}
-                className="project-thumb"
-                loading="lazy"        /* hint browser to defer off-screen images */
-              />
-
+              {/* Thumbnail removed */}
               <h3>{p.title}</h3>
               <p>{p.description}</p>
 
-              {/* Badges show type + technologies at a glance */}
               <div className="project-tags">
                 <span className="badge badge--type">{p.type}</span>
                 {(p.stack || []).map((s) => (
@@ -232,14 +244,9 @@ export default function Projects() {
                 ))}
               </div>
 
-              {/* Primary actions for each project */}
               <div className="project-actions">
-                <Link to={p.details} className="btn">
-                  Learn More
-                </Link>
-                <a href={p.download} className="btn" download>
-                  Download
-                </a>
+                <Link to={p.details} className="btn">Learn More</Link>
+                <a href={p.download} className="btn" download>Download</a>
               </div>
             </div>
           ))}
@@ -259,7 +266,10 @@ export default function Projects() {
         .project-tags { display: flex; gap: .35rem; flex-wrap: wrap; margin: .5rem 0; }
         .badge { font-size: .75rem; border: 1px solid #e5e5e5; padding: .2rem .45rem; border-radius: 999px; }
         .badge--type { background: #f5f5f5; }
-        .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+
+        /* Small cosmetic tweaks since there's no thumbnail */
+        .project-card h3 { margin-top: .25rem; margin-bottom: .35rem; }
+        .project-card p { margin: 0 0 .5rem 0; line-height: 1.45; }
       `}</style>
     </main>
   );

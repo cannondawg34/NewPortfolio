@@ -1,42 +1,174 @@
+/* ----------------------------
+   1) Base & reset
+----------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; line-height: 1.5; color: #0f172a; background: #fff; }
+
+/* smooth behavior for hash links */
+html { scroll-behavior: smooth; }
+
+/* Remove Vite starter constraints so hero can be full-bleed */
 #root {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: initial;
+}
+
+/* Links */
+a { color: inherit; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ----------------------------
+   2) Hero (full-screen)
+----------------------------- */
+.hero {
+  background-image: url('/hero.jpg'); /* file must be in /public */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  min-height: 100vh;     /* full viewport height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  color: #fff;
+  text-align: center;
+  padding: 0 1rem;
+  position: relative;    /* required for overlay */
+}
+
+/* Optional dark overlay for readability */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 0;
+}
+.hero > * { position: relative; z-index: 1; }
+
+.hero h1 {
+  margin: 0 0 .5rem;
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+.hero p {
+  margin: 0 auto 1rem;
+  max-width: 800px;
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+}
+
+/* ----------------------------
+   3) Buttons
+----------------------------- */
+/* Base button (primary) */
+.btn,
+.btn:link,
+.btn:visited {
+  display: inline-block;
+  padding: 0.65rem 1rem;
+  border-radius: 0.5rem;
+  background: #2563eb;     /* blue */
+  color: #fff;              /* white text by default */
+  border: none;
+  text-decoration: none;    /* for <a class="btn"> */
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+.btn:hover { transform: translateY(-1px); opacity: 0.95; }
+.btn:active { transform: translateY(0); opacity: 0.9; }
+
+/* Ghost variant (e.g., Clear) */
+.btn--ghost,
+.btn--ghost:link,
+.btn--ghost:visited {
+  background: transparent;
+  color: #0f172a;                   /* dark text */
+  border: 1px solid #d1d5db;        /* subtle border */
+}
+.btn--ghost:hover   { background: #f3f4f6; }
+.btn--ghost:active  { background: #e5e7eb; }
+
+/* Project card buttons: make idle text BLACK (not green/white) */
+.projects-section .btn,
+.projects-section .btn:link,
+.projects-section .btn:visited {
+  color: #111;          /* black-ish text on blue button */
+}
+.projects-section .btn:hover,
+.projects-section .btn:focus {
+  color: #fff;          /* white on hover for contrast */
+}
+
+/* ----------------------------
+   4) Nav
+----------------------------- */
+nav {
+  position: sticky; top: 0;
+  z-index: 10;
+  background: #0f172a;       /* dark slate */
+  color: #fff;
+  padding: 0.75rem 1rem;
+}
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 0.75rem 1rem;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+nav a {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem .75rem;
+  border-radius: .5rem;
+}
+nav a:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* Optional menu button placeholder (hidden on desktop) */
+.menu-button { display: none; }
+
+/* ----------------------------
+   5) Main content container
+----------------------------- */
+main {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 1rem;
+}
+
+/* Ensure the scroll target doesn't hide under sticky nav (Projects page) */
+#projectsTop { scroll-margin-top: 80px; } /* adjust to your nav height */
+
+/* ----------------------------
+   6) Footer
+----------------------------- */
+footer {
+  background: #0b1220;
+  color: #cbd5e1;
   text-align: center;
+  padding: 2rem 1rem;
 }
+.social-links {
+  margin-top: .5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+.social-links a { color: inherit; text-decoration: none; }
+.social-links a:hover { text-decoration: underline; }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+/* ----------------------------
+   7) Small screens
+----------------------------- */
+@media (max-width: 640px) {
+  .menu-button { display: inline-block; margin-right: .5rem; }
 }

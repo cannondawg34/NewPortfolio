@@ -1,5 +1,7 @@
+// src/components/Layout.jsx
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
+import ThemeToggle from '../context/ThemeToggle'; // 👈 import the toggle
 
 const Layout = () => {
   return (
@@ -7,7 +9,8 @@ const Layout = () => {
       <header className="hero">
         <h1>Welcome to Cannon's Layer</h1>
         <p>Exploring creativity through code, games, and innovative projects!</p>
-        <Link to="/projects" className="btn">View My Work</Link>
+        {/* Go to Projects and land just below the hero */}
+        <Link to="/projects#projectsTop" className="btn">View My Work</Link>
       </header>
 
       <nav>
@@ -18,10 +21,13 @@ const Layout = () => {
           <li><Link to="/projects">My Projects</Link></li>
           <li><Link to="/games">My Games</Link></li>
         </ul>
+
+        {/* 👇 Add the theme toggle here */}
+        <ThemeToggle />
       </nav>
 
       <main>
-        <Outlet /> {/* This is where page content gets rendered */}
+        <Outlet />
       </main>
 
       <footer>

@@ -1,10 +1,23 @@
-import { Link } from 'react-router-dom';
+// src/pages/Home.jsx
+import { Link, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import '../GameSite/css/styles.css';
 
 function Home() {
+  const location = useLocation();
+
+  // When navigated to "/#work", scroll to the section smoothly
+  useEffect(() => {
+    if (location.hash === '#work') {
+      const el = document.getElementById('work');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [location]);
+
   return (
     <main>
-      <section className="featured-projects">
+      {/* Anchor target just below the hero */}
+      <section id="work" className="featured-projects">
         <h2>Featured Projects</h2>
         <div className="project-grid">
           <div className="project-card">

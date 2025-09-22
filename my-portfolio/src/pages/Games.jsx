@@ -1,34 +1,42 @@
+// src/pages/Games.jsx
 import '../GameSite/css/styles.css';
 import gameThumb1 from '../GameSite/images/SDVthumb.PNG';
-import gameThumb2 from '../GameSite/images/background1.jpg';
+import gameThumb2 from '../GameSite/images/topdownrpgthumbnail.PNG';
+import GameCard from '../components/GameCard.jsx';
+
+// 🔑 Import videos (place them in /public/videos or src/videos)
+//import gameVideo1 from '../GameSite/videos/SDVdemo.mp4';
+//import gameVideo2 from '../GameSite/videos/MysticQuestDemo.mp4';
 
 function Games() {
+  // Centralized game data
+  const GAMES = [
+    {
+      thumb: gameThumb1,
+      video: null, 
+      title: "Super Dragon Vanguard",
+      description: "An immersive on-rails shooter game. Choose your paths and explore!",
+      download: "/downloads/SuperDragonVanguardBeta.zip",
+    },
+    {
+      thumb: gameThumb2,
+      video: null,
+      title: "[UNTITLED] Top Down RPG",
+      description: "A story-driven RPG adventure with puzzles and epic battles.",
+      download: "/downloads/game2.zip",
+    },
+  ];
+
   return (
     <main>
       <section className="games-section">
-        <h2>Explore and Download My Games</h2>
+        <h2>Check Out My Games!</h2>
 
         <div className="games-container">
-          {/* Game 1 */}
-          <div className="game-card">
-            <img src={gameThumb1} alt="Game 1 Thumbnail" className="game-thumb" />
-            <h3>Super Dragon Vanguard</h3>
-            <p>An immersive on-rails shooter game. Choose your paths and explore!</p>
-            <a href="/downloads/SuperDragonVanguardBeta.zip" className="download-btn" download>
-            Download
-            </a>
-          </div>
-
-          {/* Game 2 */}
-          <div className="game-card">
-            <img src={gameThumb2} alt="Game 2 Thumbnail" className="game-thumb" />
-            <h3>Game Title 2</h3>
-            <p>Brief description of the game goes here. Highlight its features or genre.</p>
-            <a href="/downloads/game2.zip" className="download-btn" download>
-              Download
-            </a>
-          </div>
-        </div> {/* ✅ closes .games-container */}
+          {GAMES.map((game, idx) => (
+            <GameCard key={idx} {...game} />
+          ))}
+        </div>
       </section>
     </main>
   );
