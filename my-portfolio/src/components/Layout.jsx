@@ -31,7 +31,7 @@ const Layout = () => {
       </main>
 
       <footer>
-        <p>&copy; Cannon's Website | <a href="mailto:cannon@example.com">Contact Me</a></p>
+        <p>&copy; Cannon's Website | <a href="mailto:cannon.d18@gmail.com">Contact Me</a></p>
         <div className="social-links">
           <a href="https://github.com/cannondawg34" target="_blank" rel="noopener noreferrer">GitHub</a>
           <a href="https://www.linkedin.com/in/cannon-dyer-b1778a302" target="_blank" rel="noopener noreferrer">LinkedIn</a>
