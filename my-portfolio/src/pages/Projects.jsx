@@ -1,12 +1,10 @@
 // src/pages/Projects.jsx
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../GameSite/css/styles.css';
 
 /* ---------------------------------------------------------------------------
    Helper: build a correct URL for GitHub Pages.
-   - BASE_URL = "/" in dev, "/NewPortfolio/" in production
-   - We also encode the path in case a space sneaks in
 --------------------------------------------------------------------------- */
 const BASE = import.meta.env.BASE_URL;
 const dlUrl = (path) => encodeURI(`${BASE}${path.replace(/^\//, '')}`);
@@ -21,9 +19,9 @@ const PROJECTS = [
     thumb: '/images/cinema-ebooking.jpg',
     description:
       'Full Stack Web Application built with React, Spring-Boot, and MySQL. Allows users to create an account and log in, book a showtime for a movie, and even use promo codes to get deals!',
-    // put file at: public/downloads/cinema-e-booking.zip  (rename if needed)
     download: 'downloads/cinema-e-booking.zip',
-    details: '/projects/cinema-ebooking',
+    longDescription:
+      'Built a full-stack ticketing flow (auth, seat selection, promos). API: Spring Boot + MySQL; Frontend: React. Payment flow mocked; strong focus on schema design and validation.',
     stack: ['Java', 'Spring Boot', 'SQL', 'HTML', 'CSS', 'React'],
     type: 'web',
   },
@@ -33,9 +31,9 @@ const PROJECTS = [
     thumb: '/images/video-game-query.jpg',
     description:
       'Flask web app to browse and filter recommended video games based on user searches!',
-    // public/downloads/flask-app.zip
     download: 'downloads/flask-app.zip',
-    details: '/projects/vg-query',
+    longDescription:
+      'Search games, filter by platform/genre, and view curated recommendations. Flask + Jinja templates, SQLite for data, requests for metadata, simple caching layer.',
     stack: ['Python', 'Flask', 'SQL'],
     type: 'web',
   },
@@ -45,9 +43,9 @@ const PROJECTS = [
     thumb: '/images/nba-predictor.jpg',
     description:
       'Machine learning pipeline that extracts NBA game data from JSON APIs, transforms it into CSV datasets, and trains models to predict player performance stats.',
-    // public/downloads/nba-player-props.zip
     download: 'downloads/nba-player-props.zip',
-    details: '/projects/nba-stats-predictor',
+    longDescription:
+      'ETL in Jupyter: JSON → clean CSVs (pandas). Features: rolling avgs, opponent splits. Models: baseline LR and RandomForest; tracked MAE across seasons.',
     stack: ['Python', 'Pandas', 'Sklearn'],
     type: 'data',
   },
@@ -55,11 +53,8 @@ const PROJECTS = [
     title: 'Old Portfolio Website',
     slug: 'school-portfolio',
     thumb: '/images/school-portfolio.jpg',
-    description:
-      'This is my old Portfolio Site that I made in school! Built with HTML and CSS',
-    // public/downloads/old-portfolio.zip
+    description: 'This is my old Portfolio Site that I made in school! Built with HTML and CSS',
     download: 'downloads/old-portfolio.zip',
-    details: '/projects/school-portfolio',
     stack: ['HTML', 'CSS'],
     type: 'web',
   },
@@ -69,9 +64,9 @@ const PROJECTS = [
     thumb: '/images/image-post-gallery.jpg',
     description:
       'React + Node/Express image gallery backed by MongoDB. Users upload images with titles/descriptions; posts render on the homepage with basic auth.',
-    // public/downloads/image-post-gallery.zip
     download: 'downloads/image-post-gallery.zip',
-    details: '/projects/image-post-gallery',
+    longDescription:
+      'JWT auth, multer for uploads, GridFS storage option, pagination on feed, and a tiny admin panel. Focus on CRUD and REST patterns.',
     stack: ['React', 'Node', 'Express', 'MongoDB', 'Axios', 'HTML', 'CSS'],
     type: 'web',
   },
@@ -81,9 +76,9 @@ const PROJECTS = [
     thumb: '/images/db-proj3.jpg',
     description:
       'Java database systems project: Implements a linear-hashing map for indexing, a Table abstraction, and a Tuple Generator for data.',
-    // public/downloads/db-proj3.zip
     download: 'downloads/db-proj3.zip',
-    details: '/projects/db-proj3',
+    longDescription:
+      'Implements split/merge buckets on overflow, load factor tracking, and probes. Benchmarked against Java HashMap on synthetic tuples.',
     stack: ['Java', 'Indexing', 'Linear Hashing'],
     type: 'data',
   },
@@ -93,9 +88,9 @@ const PROJECTS = [
     thumb: '/images/java-tcp-sockets.jpg',
     description:
       'Java networking mini-project: TCP server on port 6789 and client using sockets, BufferedReader/DataOutputStream, and a tiny text protocol.',
-    // public/downloads/networks_1.zip
     download: 'downloads/networks_1.zip',
-    details: '/projects/java-tcp-sockets',
+    longDescription:
+      'Echo + simple commands. Robust I/O handling with try-with-resources, thread-per-connection model, and basic framing.',
     stack: ['Java', 'TCP'],
     type: 'systems',
   },
@@ -126,11 +121,91 @@ function Chip({ active, children, onClick }) {
   );
 }
 
+/* ---------------------------------------------------------------------------
+   Modal (accessible, focus-managed, ESC/overlay close)
+--------------------------------------------------------------------------- */
+function Modal({ project, onClose }) {
+  const closeBtnRef = useRef(null);
+  const overlayRef = useRef(null);
+
+  useEffect(() => {
+    closeBtnRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  const handleOverlayClick = (e) => {
+    if (e.target === overlayRef.current) onClose();
+  };
+
+  const long = project.longDescription || project.description;
+
+  return (
+    <div
+      className="modal-overlay"
+      ref={overlayRef}
+      onMouseDown={handleOverlayClick}
+      aria-hidden="false"
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        className="modal"
+      >
+        <div className="modal-header">
+          <h3 id="modal-title">{project.title}</h3>
+          <button
+            type="button"
+            ref={closeBtnRef}
+            className="btn btn--ghost"
+            onClick={onClose}
+            aria-label="Close dialog"
+          >
+            Close
+          </button>
+        </div>
+
+        <div className="modal-body">
+          {/* Project image in modal */}
+          {project.thumb && (
+            <img
+              src={dlUrl(project.thumb)}
+              alt={`${project.title} preview`}
+              className="modal-thumb"
+            />
+          )}
+
+          <p className="modal-desc">{long}</p>
+
+          <div className="modal-meta">
+            {project.type && <span className="badge badge--type">{project.type}</span>}
+            {(project.stack || []).map((s) => (
+              <span className="badge" key={s}>{s}</span>
+            ))}
+          </div>
+        </div>
+
+        <div className="modal-actions">
+          <a href={dlUrl(project.download)} className="btn" download>
+            Download
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // --- Page -------------------------------------------------------------------
 export default function Projects() {
   const location = useLocation();
 
-  // Smoothly scroll to the top of the Projects list when URL hash is #projectsTop
   useEffect(() => {
     if (location.hash === '#projectsTop') {
       const el = document.getElementById('projectsTop');
@@ -141,6 +216,15 @@ export default function Projects() {
   const [query, setQuery] = useState('');
   const [stacks, setStacks] = useState(() => new Set());
   const [types, setTypes] = useState(() => new Set());
+  const [selected, setSelected] = useState(null);
+
+  useEffect(() => {
+    if (selected) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [selected]);
 
   const toggle = (set, value) => {
     const next = new Set(set);
@@ -150,18 +234,10 @@ export default function Projects() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-
     return PROJECTS.filter(p => {
       const matchesQuery = !q || [
-        p.title,
-        p.description,
-        ...(p.stack || []),
-        p.type,
-      ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase()
-        .includes(q);
+        p.title, p.description, ...(p.stack || []), p.type,
+      ].filter(Boolean).join(' ').toLowerCase().includes(q);
 
       const matchesStacks =
         stacks.size === 0 || (p.stack || []).some(s => stacks.has(s));
@@ -181,7 +257,6 @@ export default function Projects() {
 
   return (
     <main>
-      {/* Anchor target: this is where the button lands on /projects#projectsTop */}
       <section id="projectsTop" className="projects-section">
         <h2>All Projects</h2>
 
@@ -209,8 +284,7 @@ export default function Projects() {
                 <Chip
                   key={t}
                   active={types.has(t)}
-                  onClick={() => setTypes(prev => toggle(prev, t))}
-                >
+                  onClick={() => setTypes(prev => toggle(prev, t))}>
                   {t}
                 </Chip>
               ))}
@@ -224,8 +298,7 @@ export default function Projects() {
                 <Chip
                   key={s}
                   active={stacks.has(s)}
-                  onClick={() => setStacks(prev => toggle(prev, s))}
-                >
+                  onClick={() => setStacks(prev => toggle(prev, s))}>
                   {s}
                 </Chip>
               ))}
@@ -241,7 +314,15 @@ export default function Projects() {
         <div className="project-grid">
           {filtered.map((p) => (
             <div className="project-card" key={p.slug}>
-              {/* Thumbnail removed */}
+              {/* NEW: thumbnail on card */}
+              {p.thumb && (
+                <img
+                  src={dlUrl(p.thumb)}
+                  alt={`${p.title} thumbnail`}
+                  className="project-thumb"
+                />
+              )}
+
               <h3>{p.title}</h3>
               <p>{p.description}</p>
 
@@ -252,17 +333,29 @@ export default function Projects() {
                 ))}
               </div>
 
-              <div className="project-actions single">
+              <div className="project-actions">
                 <a href={dlUrl(p.download)} className="btn" download>
                   Download
                 </a>
+                <button
+                  type="button"
+                  className="btn btn--accent"
+                  onClick={() => setSelected(p)}
+                >
+                  Learn More
+                </button>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Minimal inline styles for the new bits; tailor in your CSS if you want */}
+      {/* Modal mount point */}
+      {selected && (
+        <Modal project={selected} onClose={() => setSelected(null)} />
+      )}
+
+      {/* Minimal inline tweaks */}
       <style>{`
         .filters-bar { display: grid; gap: .75rem; margin-bottom: 1rem; }
         .filters-row { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; }
@@ -275,11 +368,26 @@ export default function Projects() {
         .project-tags { display: flex; gap: .35rem; flex-wrap: wrap; margin: .5rem 0; }
         .badge { font-size: .75rem; border: 1px solid #e5e5e5; padding: .2rem .45rem; border-radius: 999px; }
         .badge--type { background: #f5f5f5; }
-
-        /* Small cosmetic tweaks since there's no thumbnail */
-        .project-card h3 { margin-top: .25rem; margin-bottom: .35rem; }
+        .project-card h3 { margin-top: .5rem; margin-bottom: .35rem; }
         .project-card p { margin: 0 0 .5rem 0; line-height: 1.45; }
-        .project-actions.single { display: flex; justify-content: flex-start; }
+        .project-actions { display: flex; gap: .5rem; }
+
+        /* NEW: thumbnails */
+        .project-thumb {
+          width: 100%;
+          height: auto;
+          border-radius: 8px;
+          object-fit: cover;
+          display: block;
+          margin-bottom: .5rem;
+        }
+        .modal-thumb {
+          width: 100%;
+          height: auto;
+          border-radius: 10px;
+          object-fit: cover;
+          margin-bottom: .75rem;
+        }
       `}</style>
     </main>
   );
