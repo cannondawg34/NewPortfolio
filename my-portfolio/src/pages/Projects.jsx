@@ -28,7 +28,7 @@ const PROJECTS = [
   {
     title: 'Video Game Recommender Website',
     slug: 'vg-query',
-    thumb: '/images/video-game-query.jpg',
+    thumb: '/images/VideoGameRecommenderThumb.PNG',
     description:
       'Flask web app to browse and filter recommended video games based on user searches!',
     download: 'downloads/flask-app.zip',
@@ -40,7 +40,7 @@ const PROJECTS = [
   {
     title: 'NBA Predicting Stats',
     slug: 'nba-stats-predictor',
-    thumb: '/images/nba-predictor.jpg',
+    thumb: '/images/nbathumb.PNG',
     description:
       'Machine learning pipeline that extracts NBA game data from JSON APIs, transforms it into CSV datasets, and trains models to predict player performance stats.',
     download: 'downloads/nba-player-props.zip',
@@ -52,7 +52,7 @@ const PROJECTS = [
   {
     title: 'Old Portfolio Website',
     slug: 'school-portfolio',
-    thumb: '/images/school-portfolio.jpg',
+    thumb: '/images/oldportfoliopic.PNG',
     description: 'This is my old Portfolio Site that I made in school! Built with HTML and CSS',
     download: 'downloads/old-portfolio.zip',
     stack: ['HTML', 'CSS'],
@@ -61,7 +61,7 @@ const PROJECTS = [
   {
     title: 'Image Post Gallery (MERN)',
     slug: 'image-post-gallery',
-    thumb: '/images/image-post-gallery.jpg',
+    thumb: '/images/goonThumb.PNG',
     description:
       'React + Node/Express image gallery backed by MongoDB. Users upload images with titles/descriptions; posts render on the homepage with basic auth.',
     download: 'downloads/image-post-gallery.zip',
@@ -73,7 +73,7 @@ const PROJECTS = [
   {
     title: 'DB Project: Linear Hashing Index',
     slug: 'db-proj3',
-    thumb: '/images/db-proj3.jpg',
+    thumb: '/images/dbproj3.PNG',
     description:
       'Java database systems project: Implements a linear-hashing map for indexing, a Table abstraction, and a Tuple Generator for data.',
     download: 'downloads/db-proj3.zip',
@@ -85,7 +85,7 @@ const PROJECTS = [
   {
     title: 'TCP Client/Server (Java Sockets)',
     slug: 'java-tcp-sockets',
-    thumb: '/images/java-tcp-sockets.jpg',
+    thumb: '/images/SocketThumb.PNG',
     description:
       'Java networking mini-project: TCP server on port 6789 and client using sockets, BufferedReader/DataOutputStream, and a tiny text protocol.',
     download: 'downloads/networks_1.zip',
