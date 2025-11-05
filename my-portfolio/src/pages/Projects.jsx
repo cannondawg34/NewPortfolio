@@ -16,7 +16,7 @@ const PROJECTS = [
   {
     title: 'Cinema E-Booking Website',
     slug: 'cinema-ebooking',
-    thumb: '/images/cinema-ebooking.jpg',
+    thumb: '/images/cinemaThumb.PNG',
     description:
       'Full Stack Web Application built with React, Spring-Boot, and MySQL. Allows users to create an account and log in, book a showtime for a movie, and even use promo codes to get deals!',
     download: 'downloads/cinema-e-booking.zip',
