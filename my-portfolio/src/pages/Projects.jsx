@@ -21,7 +21,7 @@ const PROJECTS = [
       'Full Stack Web Application built with React, Spring-Boot, and MySQL. Allows users to create an account and log in, book a showtime for a movie, and even use promo codes to get deals!',
     download: 'downloads/cinema-e-booking.zip',
     longDescription:
-      'Built a full-stack ticketing flow (auth, seat selection, promos). API: Spring Boot + MySQL; Frontend: React. Payment flow mocked; strong focus on schema design and validation.',
+      'Built a full-stack ticketing flow (auth, seat selection, promos). API: Spring Boot + MySQL; Frontend: React. Payment flow mocked; Schema design and normalization practices for DB.',
     stack: ['Java', 'Spring Boot', 'SQL', 'HTML', 'CSS', 'React'],
     type: 'web',
   },
@@ -33,7 +33,7 @@ const PROJECTS = [
       'Flask web app to browse and filter recommended video games based on user searches!',
     download: 'downloads/flask-app.zip',
     longDescription:
-      'Search games, filter by platform/genre, and view curated recommendations. Flask + Jinja templates, SQLite for data, requests for metadata, simple caching layer.',
+      'Search games, filter by platform/genre, and view curated recommendations. Flask + Jinja templates, MYSQL for data, requests for metadata, simple caching layer.',
     stack: ['Python', 'Flask', 'SQL'],
     type: 'web',
   },
